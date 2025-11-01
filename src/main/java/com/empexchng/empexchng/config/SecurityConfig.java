@@ -23,7 +23,7 @@ public class SecurityConfig {
         .oauth2Login(oauth -> oauth
             .loginPage("/")
             .defaultSuccessUrl("/oauth2/success", true)
-        );
+        )
 
     // OAuth2 login configuration
     .oauth2Login(oauth -> oauth

@@ -5,10 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-<<<<<<< HEAD
 import com.empexchng.empexchng.model.User;
-=======
->>>>>>> 86e8840650301dea9636dab5bb135cdd731b7de4
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
