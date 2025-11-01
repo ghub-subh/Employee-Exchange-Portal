@@ -1,0 +1,50 @@
+<!-- src/main/resources/templates/login.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+  <div class="w-full max-w-md">
+    <div class="bg-white shadow-xl rounded-lg p-8">
+      <h1 class="text-2xl font-semibold text-gray-900 text-center">Sign in</h1>
+
+      <div th:if="${error}" class="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-700" th:text="${error}">
+        Invalid credentials. [web:24][web:25]
+      </div>
+      <div th:if="${message}" class="mt-4 rounded-md bg-green-50 p-3 text-sm text-green-700" th:text="${message}">
+        Info message. [web:24][web:25]
+      </div>
+
+      <form th:action="@{/user/login}" method="post" class="mt-6 space-y-5">
+        <div>
+          <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+          <input id="username" name="username" type="text" required
+                 class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+        </div>
+
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+          <input id="password" name="password" type="password" required
+                 class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+        </div>
+
+        <div class="flex items-center justify-between">
+          <a th:href="@{/forgot-password}" class="text-sm text-blue-600 hover:underline">Forgot password?</a>
+          <a th:href="@{/register}" class="text-sm text-gray-700 hover:underline">Register</a>
+        </div>
+
+        <button type="submit" class="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition">
+          Sign in
+        </button>
+      </form>
+    </div>
+    <p class="mt-6 text-center text-sm text-gray-600">
+      This page posts to a custom controller that handles form submission. [web:24][web:25]
+    </p>
+  </div>
+</body>
+</html>
