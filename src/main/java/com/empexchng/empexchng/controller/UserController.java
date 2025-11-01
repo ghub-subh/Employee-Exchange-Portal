@@ -85,14 +85,14 @@ public String loginUser(@ModelAttribute("user") User user,
   Cookie emailCookie = new Cookie("ee_email", user.getEmail());
   emailCookie.setPath("/");              // send with all requests
   emailCookie.setHttpOnly(true);         // not accessible from JS
-  emailCookie.setSecure(true);        // enable if using HTTPS
+  //emailCookie.setSecure(true);        // enable if using HTTPS
   emailCookie.setMaxAge(7 * 24 * 60 * 60); // uncomment for persistent cookie
   response.addCookie(emailCookie);       // adds Set-Cookie header [web:388][web:383]
 
   // 3) Redirect by role (PRG)
   String target = switch (role) {
     case "ADMIN"     -> "/admin/panel";
-    case "EMPLOYEE"  -> "/employee/panel";
+    case "EMPLOYER"  -> "/employer/dashboard";
     case "JOB_SEEKER"-> "/jobseeker/panel";
     default          -> "/";              // fallback
   };

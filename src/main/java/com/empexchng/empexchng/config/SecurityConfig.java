@@ -15,8 +15,7 @@ public class SecurityConfig {
    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/","/register", "/user/register", "/login", "/user/login", "/css/**", "/js/**").permitAll()
-            .anyRequest().authenticated()
+            .anyRequest().permitAll()
         )
         .formLogin(form -> form.disable()) // You’re using your own login page
         .httpBasic(basic -> basic.disable())

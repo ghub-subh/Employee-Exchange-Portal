@@ -19,38 +19,43 @@ public class HomeController {
     @Autowired
     private UserRepository userRepository;
 
-   @GetMapping("/")
-public String home(@CookieValue(value = "ee_email", required = false) String emailCookie,
+@GetMapping("/")
+public String home(@CookieValue(value="ee_email", required=false) String email,
                    Model model) {
-  if (emailCookie != null && !emailCookie.isBlank()) {
-    // Optional: verify the email exists and fetch role
-    String role = userRepository.getRoleByEmail(emailCookie);
-
+  if (email != null && !email.isBlank()) {
+    String role = userRepository.getRoleByEmail(email);
     String target = switch (role) {
-      case "ADMIN"      -> "/admin/panel";
-      case "EMPLOYEE"   -> "/employee/panel";
+      case "ADMIN" -> "/admin/panel";
+      case "EMPLOYER" -> "/employer/dashboard";
       case "JOB_SEEKER" -> "/jobseeker/panel";
-      default           -> "/login";
+      default -> "/login";
     };
-    return "redirect:" + target;  // short-circuit to panel
+    return "redirect:" + target;
   }
-
-  // No cookie -> show the normal home page (or login/register UI)
   model.addAttribute("user", new User());
   return "homepage";
 }
 
 
-    @GetMapping("/login")
-    public String login() {
-        // Returns the "login.html" Thymeleaf template (src/main/resources/templates/login.html)
-        return "login";
+ @GetMapping("/login")
+  public String showLogin(Model model) {
+    if (!model.containsAttribute("user")) {
+      model.addAttribute("user", new User());
     }
+    return "login";
+  }
 
   @GetMapping("/register")
-  public String register(Model model) {
-      model.addAttribute("user", new User());
-    return "register";
+    public String register(Model model)
+    {
+
+      model.addAttribute("user", new  User());
+      return "register";
+
+    }
   }
+  
+
+
     
-}
+

@@ -3,7 +3,6 @@ package com.empexchng.empexchng.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.boot.autoconfigure.batch.BatchProperties.Job;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

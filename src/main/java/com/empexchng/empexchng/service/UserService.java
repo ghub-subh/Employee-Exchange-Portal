@@ -42,18 +42,17 @@ public class UserService {
         userRepository.save(user);
         return "User registered successfully!";
     }
-    public String loginUser(User user) {
-        User existingUser = userRepository.findByEmail(user.getEmail());
-        if (existingUser != null) {
-            if (passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
-                return user.getRole();
-            } else {
-                return "Invalid password!";
-            }
-        } else {
-            return "User not found!";
-        }
-    }
+  public String loginUser(User user) {
+  User existingUser = userRepository.findByEmail(user.getEmail());
+  if (existingUser == null) {
+    throw new IllegalArgumentException("Invalid credentials"); // avoid revealing which field
+  }
+  if (!passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
+    throw new IllegalArgumentException("Invalid credentials");
+  }
+  return existingUser.getRole(); // never user.getRole()
+}
+
 
     private String generateUserId(String role) {
         return role.charAt(0) + String.format("%04d", userRepository.count() + 1);
