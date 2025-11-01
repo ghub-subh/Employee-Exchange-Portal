@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Employment Exchange</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <!-- Navbar -->
+  <header class="bg-white shadow-md sticky top-0 z-50">
+    <div class="container mx-auto flex justify-between items-center py-4 px-6">
+      <h1 class="text-2xl font-bold text-blue-600">Employment Exchange</h1>
+      <nav class="space-x-6">
+        <a href="#" class="text-gray-600 hover:text-blue-600">Home</a>
+        <a href="#" class="text-gray-600 hover:text-blue-600">Jobs</a>
+        <a href="#" class="text-gray-600 hover:text-blue-600">Employers</a>
+        <a href="#" class="text-gray-600 hover:text-blue-600">About</a>
+        <a href="#" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="bg-blue-600 text-white py-20">
+    <div class="container mx-auto text-center">
+      <h2 class="text-4xl font-bold mb-4">Find Your Dream Job Today!</h2>
+      <p class="text-lg mb-6">Connecting talented individuals with top employers across the country.</p>
+
+      <!-- Search Bar -->
+      <div class="bg-white p-4 rounded-xl shadow-lg max-w-3xl mx-auto flex flex-col sm:flex-row gap-3">
+        <input type="text" placeholder="Job title, keywords..." class="flex-grow px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <input type="text" placeholder="Location" class="flex-grow px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <button class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Search</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Jobs -->
+  <section class="py-16">
+    <div class="container mx-auto px-6">
+      <h3 class="text-3xl font-bold text-center mb-10">Featured Job Listings</h3>
+      <div class="grid md:grid-cols-3 gap-8">
+        <!-- Job Card -->
+        <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+          <h4 class="text-xl font-semibold mb-2">Software Engineer</h4>
+          <p class="text-gray-600 mb-4">TechCorp Pvt Ltd - Bengaluru</p>
+          <p class="text-gray-500 text-sm mb-4">We’re looking for a passionate software developer to join our growing team.</p>
+          <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Apply Now</button>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+          <h4 class="text-xl font-semibold mb-2">Marketing Executive</h4>
+          <p class="text-gray-600 mb-4">BrightFuture Inc - Mumbai</p>
+          <p class="text-gray-500 text-sm mb-4">Looking for a creative individual to lead our marketing campaigns.</p>
+          <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Apply Now</button>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+          <h4 class="text-xl font-semibold mb-2">Data Analyst</h4>
+          <p class="text-gray-600 mb-4">Insight Analytics - Delhi</p>
+          <p class="text-gray-500 text-sm mb-4">Join our data team to analyze and visualize large datasets.</p>
+          <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Apply Now</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="bg-blue-50 py-16">
+    <div class="container mx-auto px-6 text-center">
+      <h3 class="text-3xl font-bold mb-6">About the Employment Exchange</h3>
+      <p class="max-w-3xl mx-auto text-gray-600 leading-relaxed">
+        The Online Employment Exchange is a government-supported platform that bridges the gap between job seekers and employers. 
+        Our mission is to create transparent, efficient, and accessible opportunities for everyone across various sectors.
+      </p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-300 py-8">
+    <div class="container mx-auto text-center">
+      <p>&copy; 2025 Online Employment Exchange. All rights reserved.</p>
+      <div class="mt-4 space-x-4">
+        <a href="#" class="hover:text-white">Privacy Policy</a>
+        <a href="#" class="hover:text-white">Terms of Service</a>
+        <a href="#" class="hover:text-white">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
