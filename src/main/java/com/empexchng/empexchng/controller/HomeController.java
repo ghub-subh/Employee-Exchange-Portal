@@ -28,9 +28,9 @@ public String home(@CookieValue(value = "ee_email", required = false) String ema
 
     String target = switch (role) {
       case "ADMIN"      -> "/admin/panel";
-      case "EMPLOYEE"   -> "/employee/panel";
+      case "EMPLOYER"   -> "/employer/dashboard";
       case "JOB_SEEKER" -> "/jobseeker/panel";
-      default           -> "/login";
+      default           -> "/";
     };
     return "redirect:" + target;  // short-circuit to panel
   }
@@ -41,11 +41,14 @@ public String home(@CookieValue(value = "ee_email", required = false) String ema
 }
 
 
-    @GetMapping("/login")
-    public String login() {
-        // Returns the "login.html" Thymeleaf template (src/main/resources/templates/login.html)
-        return "login";
-    }
+   @GetMapping("/login")
+public String loginPage(Model model) {
+  if (!model.containsAttribute("user")) {
+    model.addAttribute("user", new User());
+  }
+  return "login";
+}
+
 
   @GetMapping("/register")
   public String register(Model model) {

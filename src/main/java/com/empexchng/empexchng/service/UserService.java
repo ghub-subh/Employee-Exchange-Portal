@@ -43,17 +43,17 @@ public class UserService {
         return "User registered successfully!";
     }
     public String loginUser(User user) {
-        User existingUser = userRepository.findByEmail(user.getEmail());
-        if (existingUser != null) {
-            if (passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
-                return user.getRole();
-            } else {
-                return "Invalid password!";
-            }
-        } else {
-            return "User not found!";
-        }
+    User existingUser = userRepository.findByEmail(user.getEmail());
+    if (existingUser == null) {
+        throw new IllegalArgumentException("User not found");
     }
+    if (!passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
+        throw new IllegalArgumentException("Invalid credentials");
+    }
+    // Return the persisted role, never the form’s null role
+    return existingUser.getRole(); // "ADMIN" | "EMPLOYEE" | "JOB_SEEKER"
+}
+
 
     private String generateUserId(String role) {
         return role.charAt(0) + String.format("%04d", userRepository.count() + 1);

@@ -1,94 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Online Employment Exchange</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EmpExchng</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-  <!-- Navbar -->
-  <header class="bg-white shadow-md sticky top-0 z-50">
-  <div class="container mx-auto flex justify-between items-center py-4 px-6">
-    <h1 class="text-2xl font-bold text-blue-600">Employment Exchange</h1>
+<nav class="bg-white shadow-md fixed w-full z-10 top-0 left-0">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <div class="flex items-center">
+      <img src="https://th.bing.com/th/id/OIP.YrKaN_pzSVmrw7UntdcbTAHaHa?w=162&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" alt="Logo" class="h-10 w-10 object-contain mr-1" />
+      <h1 class="text-2xl font-bold text-blue-600">EmpExchng</h1>
+    </div>
 
-    <!-- Anonymous: route everything to /login -->
-    <nav class="space-x-6" th:if="${!loggedIn}">
-      <a th:href="@{/login}" class="text-gray-600 hover:text-blue-600">Home</a>
-      <a th:href="@{/login}" class="text-gray-600 hover:text-blue-600">Jobs</a>
-      <a th:href="@{/login}" class="text-gray-600 hover:text-blue-600">Employers</a>
-      <a th:href="@{/login}" class="text-gray-600 hover:text-blue-600">About</a>
-      <a th:href="@{/login}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Login</a>
-    </nav>
+    <!-- Links visible to everyone -->
+    <div class="space-x-6 hidden md:flex">
+      <a th:href="@{/}" class="hover:text-blue-600">Home</a>
+      <a href="#features" class="hover:text-blue-600">Features</a>
+      <a href="#about" class="hover:text-blue-600">About</a>
+      <a href="#contact" class="hover:text-blue-600">Contact</a>
+
+      <!-- Show dashboard only when logged in -->
+      <a th:if="${loggedIn}" th:href="@{/employer/dashboard}" class="hover:text-blue-600">Dashboard</a>
+    </div>
+
+    <!-- Right actions -->
+    <div class="space-x-4">
+      <!-- Anonymous: Login/Register -->
+      <a th:if="${!loggedIn}" th:href="@{/login}"
+         class="hidden md:inline px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Login</a>
+      <a th:if="${!loggedIn}" th:href="@{/register}"
+         class="hidden md:inline px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white">Register</a>
+
+      <!-- Logged in: show email + Logout -->
+      <span th:if="${loggedIn}" class="hidden md:inline text-sm text-gray-600" th:text="${email}">you@example.com</span>
+      <form th:if="${loggedIn}" th:action="@{/logout}" method="post" class="hidden md:inline">
+        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">Logout</button>
+      </form>
+    </div>
   </div>
-</header>
+</nav>
 
 
-  <!-- Hero Section -->
-  <section class="bg-blue-600 text-white py-20">
-    <div class="container mx-auto text-center">
-      <h2 class="text-4xl font-bold mb-4">Find Your Dream Job Today!</h2>
-      <p class="text-lg mb-6">Connecting talented individuals with top employers across the country.</p>
 
-      <!-- Search Bar -->
-      <div class="bg-white p-4 rounded-xl shadow-lg max-w-3xl mx-auto flex flex-col sm:flex-row gap-3">
-        <input type="text" placeholder="Job title, keywords..." class="flex-grow px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-400">
-        <input type="text" placeholder="Location" class="flex-grow px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-400">
-        <button class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Search</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Featured Jobs -->
-  <section class="py-16">
-    <div class="container mx-auto px-6">
-      <h3 class="text-3xl font-bold text-center mb-10">Featured Job Listings</h3>
-      <div class="grid md:grid-cols-3 gap-8">
-        <!-- Job Card -->
-        <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-          <h4 class="text-xl font-semibold mb-2">Software Engineer</h4>
-          <p class="text-gray-600 mb-4">TechCorp Pvt Ltd - Bengaluru</p>
-          <p class="text-gray-500 text-sm mb-4">We’re looking for a passionate software developer to join our growing team.</p>
-          <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Apply Now</button>
-        </div>
-        <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-          <h4 class="text-xl font-semibold mb-2">Marketing Executive</h4>
-          <p class="text-gray-600 mb-4">BrightFuture Inc - Mumbai</p>
-          <p class="text-gray-500 text-sm mb-4">Looking for a creative individual to lead our marketing campaigns.</p>
-          <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Apply Now</button>
-        </div>
-        <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-          <h4 class="text-xl font-semibold mb-2">Data Analyst</h4>
-          <p class="text-gray-600 mb-4">Insight Analytics - Delhi</p>
-          <p class="text-gray-500 text-sm mb-4">Join our data team to analyze and visualize large datasets.</p>
-          <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Apply Now</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- About Section -->
-  <section class="bg-blue-50 py-16">
-    <div class="container mx-auto px-6 text-center">
-      <h3 class="text-3xl font-bold mb-6">About the Employment Exchange</h3>
-      <p class="max-w-3xl mx-auto text-gray-600 leading-relaxed">
-        The Online Employment Exchange is a government-supported platform that bridges the gap between job seekers and employers. 
-        Our mission is to create transparent, efficient, and accessible opportunities for everyone across various sectors.
+  <section class="pt-32 pb-20 bg-gradient-to-r from-blue-50 to-blue-100 text-center">
+    <div class="max-w-3xl mx-auto px-6">
+      <h2 class="text-4xl font-extrabold text-gray-900 mb-4">Welcome to the Online Employment Exchange</h2>
+      <p class="text-lg text-gray-600 mb-8">
+        A smart platform connecting job seekers with employers efficiently and transparently.
       </p>
+      <div class="flex justify-center gap-4">
+        <a href="#" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Find a Job</a>
+        <a href="#" class="px-6 py-3 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white">Post a Job</a>
+      </div>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="bg-gray-900 text-gray-300 py-8">
-    <div class="container mx-auto text-center">
-      <p>&copy; 2025 Online Employment Exchange. All rights reserved.</p>
-      <div class="mt-4 space-x-4">
-        <a href="#" class="hover:text-white">Privacy Policy</a>
-        <a href="#" class="hover:text-white">Terms of Service</a>
-        <a href="#" class="hover:text-white">Contact</a>
+  <section id="features" class="py-20 bg-white">
+    <div class="max-w-6xl mx-auto px-6 text-center">
+      <h3 class="text-3xl font-bold mb-12 text-gray-800">Our Key Features</h3>
+      <div class="grid md:grid-cols-3 gap-10">
+        <div class="p-6 bg-blue-50 rounded-2xl shadow hover:shadow-lg transition">
+          <h4 class="text-xl font-semibold text-blue-700 mb-2">Easy Registration</h4>
+          <p>Sign up quickly and build your profile in minutes with our simple interface.</p>
+        </div>
+        <div class="p-6 bg-blue-50 rounded-2xl shadow hover:shadow-lg transition">
+          <h4 class="text-xl font-semibold text-blue-700 mb-2">Job Matching</h4>
+          <p>Get job recommendations tailored to your skills and experience instantly.</p>
+        </div>
+        <div class="p-6 bg-blue-50 rounded-2xl shadow hover:shadow-lg transition">
+          <h4 class="text-xl font-semibold text-blue-700 mb-2">Verified Employers</h4>
+          <p>All employers and job postings are verified to ensure reliability and trust.</p>
+        </div>
       </div>
     </div>
+  </section>
+
+  <section id="about" class="py-20 bg-gray-50">
+    <div class="max-w-5xl mx-auto px-6 text-center">
+      <h3 class="text-3xl font-bold mb-6">About Us</h3>
+      <p class="text-gray-700 leading-relaxed">
+        The Online Employment Exchange is a government-backed platform aimed at bridging the gap between
+        job seekers and employers. Our mission is to create a transparent, fast, and reliable employment ecosystem.
+      </S>
+    </div>
+  </section>
+
+  <section id="contact" class="py-20 bg-white">
+    <div class="max-w-5xl mx-auto px-6 text-center">
+      <h3 class="text-3xl font-bold mb-6">Get in Touch</h3>
+      <p class="text-gray-700 mb-8">Have questions? We'd love to hear from you!</p>
+      <a href="mailto:support@employmentexchange.com"
+         class="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Contact Us</a>
+    </div>
+  </section>
+
+  <footer class="bg-gray-900 text-gray-300 py-8 text-center">
+    <p>&copy; 2025 Employment Exchange. All Rights Reserved.</p>
   </footer>
 
 </body>

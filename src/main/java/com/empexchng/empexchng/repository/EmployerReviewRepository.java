@@ -7,14 +7,18 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 public interface EmployerReviewRepository extends JpaRepository<EmployerReview, Long> {
-  List<EmployerReview> findByEmployer_EmployerIdOrderByCreatedAtDesc(String employerId);
-  List<EmployerReview> findBySeeker_SeekerIdOrderByCreatedAtDesc(String seekerId);
-  double averageRatingByEmployer_EmployerId(String employerId); // custom below
 
-  @Query("select coalesce(avg(r.rating),0) from EmployerReview r where r.employer.employerId = :employerId and r.isPublic = true")
+  // Average rating for public reviews of an employer
+  @Query("select coalesce(avg(r.rating), 0) from EmployerReview r " +
+         "where r.employer.employerId = :employerId and r.isPublic = true")
   double getPublicAverage(@Param("employerId") String employerId);
 
-  @Modifying
-  @Query("update EmployerReview r set r.isPublic = :pub where r.reviewId = :id")
-  int setVisibility(@Param("id") Long reviewId, @Param("pub") boolean isPublic);
+  // If you want average over all reviews (public and private)
+  @Query("select coalesce(avg(r.rating), 0) from EmployerReview r " +
+         "where r.employer.employerId = :employerId")
+  double getAverageAll(@Param("employerId") String employerId);
+
+  // Keep your other finders
+  List<EmployerReview> findByEmployer_EmployerIdOrderByCreatedAtDesc(String employerId);
+  List<EmployerReview> findBySeeker_SeekerIdOrderByCreatedAtDesc(String seekerId);
 }
