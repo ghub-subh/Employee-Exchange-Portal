@@ -98,5 +98,16 @@ public String loginUser(@ModelAttribute("user") User user,
   };
   return "redirect:" + target;            // do not return a view name here [web:191][web:246]
 }
+@PostMapping("/logout")
+public String logout(HttpServletResponse resp, RedirectAttributes ra) {
+  jakarta.servlet.http.Cookie cookie = new jakarta.servlet.http.Cookie("ee_email", "");
+  cookie.setPath("/");
+  cookie.setMaxAge(0);         // expire immediately
+  cookie.setHttpOnly(true);
+  resp.addCookie(cookie);
+  ra.addFlashAttribute("message", "Logged out.");
+  return "redirect:/";
+}
+
 
 }

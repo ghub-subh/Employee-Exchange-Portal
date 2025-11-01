@@ -17,16 +17,15 @@
       <!-- Avatar -->
       <div id="photoContainer" class="flex justify-center items-center">
         <img th:if="${photoUrl}" th:src="${photoUrl}" alt="Profile"
+        referrerpolicy="no-referrer"
              class="rounded-full w-24 h-24 border-2 border-indigo-400 object-cover" />
       </div>
 
       <!-- Upload picture optional -->
-      <div class="flex justify-center">
-        <label class="mt-2 text-sm text-indigo-600 hover:underline cursor-pointer">
-          <input id="photoInput" type="file" accept="image/*" class="hidden" />
-          Upload photo
-        </label>
-      </div>
+
+
+
+
 
       <!-- Name -->
       <div>
@@ -123,40 +122,27 @@
   const errorMsg = document.getElementById('errorMsg');
 
   // Create circular initials avatar (Tailwind rounded-full + equal w/h). [web:45][web:42]
-  function createInitialAvatar(name) {
-    const colors = ["#F87171","#60A5FA","#34D399","#FBBF24","#A78BFA","#F472B6","#2DD4BF"];
-    const avatar = document.createElement('div');
-    avatar.textContent = (name || '?').trim().charAt(0).toUpperCase() || '?';
-    avatar.className = "flex items-center justify-center rounded-full w-24 h-24 text-white font-bold text-2xl border-2 border-indigo-400";
-    avatar.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
-    return avatar;
-  }
+   function randomColor() {
+    const palette = ["#F87171","#60A5FA","#34D399","#FBBF24","#A78BFA","#F472B6","#2DD4BF"];
+    return palette[Math.floor(Math.random() * palette.length)];
+  } // Tailwind avatar fallback pattern. [web:45][web:48]
 
-  function setAvatarFromName() {
-    if (document.querySelector('#photoContainer img')) return;
-    photoContainer.innerHTML = "";
-    photoContainer.appendChild(createInitialAvatar(nameEl.value));
-  } // Initials fallback is a common avatar pattern. [web:45][web:42]
+  function createInitialsAvatar(text) {
+    const ch = (text || 'U').trim().charAt(0).toUpperCase() || 'U';
+    const wrapper = document.createElement('div');
+    wrapper.className = "flex items-center justify-center rounded-full w-24 h-24 text-white font-bold text-2xl border-2 border-indigo-400";
+    wrapper.style.backgroundColor = randomColor();
+    wrapper.textContent = ch;
+    return wrapper;
+  } // Shows first letter with random color when image is absent. [web:45][web:87]
 
-  nameEl.addEventListener('blur', () => {
-    if (nameEl.value.trim()) setAvatarFromName();
-  });
-
-  // Optional local preview for uploaded photo
-  photoInput.addEventListener('change', (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
+  function ensureAvatar() {
+    const hasImg = photoContainer.querySelector('img');
+    if (!hasImg) {
       photoContainer.innerHTML = "";
-      const img = document.createElement('img');
-      img.src = reader.result;
-      img.alt = "Profile";
-      img.className = "rounded-full w-24 h-24 border-2 border-indigo-400 object-cover";
-      photoContainer.appendChild(img);
-    };
-    reader.readAsDataURL(file);
-  }); // object-cover keeps the image inside the circle. [web:45][web:42]
+      photoContainer.appendChild(createInitialsAvatar(nameEl?.value));
+    }
+  } // Conditional rendering mirrors common Tailwind avatar UX. [web:45][web:48]
 
   // Password strength meter (length + character variety)
   const strengthBar = document.getElementById('strengthBar');
@@ -204,10 +190,8 @@
   }); // Redirect to OAuth2 endpoint. [web:25]
 
   // Initial avatar on load if no image present
-  window.addEventListener('DOMContentLoaded', () => {
-    const hasImg = document.querySelector('#photoContainer img');
-    if (!hasImg && nameEl.value.trim()) setAvatarFromName();
-  });
+  window.addEventListener('DOMContentLoaded', ensureAvatar);
+  nameEl?.addEventListener('blur', ensureAvatar);
 </script>
 
 </body>

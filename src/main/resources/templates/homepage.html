@@ -10,17 +10,20 @@
 
   <!-- Navbar -->
   <header class="bg-white shadow-md sticky top-0 z-50">
-    <div class="container mx-auto flex justify-between items-center py-4 px-6">
-      <h1 class="text-2xl font-bold text-blue-600">Employment Exchange</h1>
-      <nav class="space-x-6">
-        <a href="#" class="text-gray-600 hover:text-blue-600">Home</a>
-        <a href="#" class="text-gray-600 hover:text-blue-600">Jobs</a>
-        <a href="#" class="text-gray-600 hover:text-blue-600">Employers</a>
-        <a href="#" class="text-gray-600 hover:text-blue-600">About</a>
-        <a href="/login" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Login</a>
-      </nav>
-    </div>
-  </header>
+  <div class="container mx-auto flex justify-between items-center py-4 px-6">
+    <h1 class="text-2xl font-bold text-blue-600">Employment Exchange</h1>
+
+    <!-- Anonymous: route everything to /login -->
+    <nav class="space-x-6" th:if="${!loggedIn}">
+      <a th:href="@{/login}" class="text-gray-600 hover:text-blue-600">Home</a>
+      <a th:href="@{/login}" class="text-gray-600 hover:text-blue-600">Jobs</a>
+      <a th:href="@{/login}" class="text-gray-600 hover:text-blue-600">Employers</a>
+      <a th:href="@{/login}" class="text-gray-600 hover:text-blue-600">About</a>
+      <a th:href="@{/login}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Login</a>
+    </nav>
+  </div>
+</header>
+
 
   <!-- Hero Section -->
   <section class="bg-blue-600 text-white py-20">
