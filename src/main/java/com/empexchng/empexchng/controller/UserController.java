@@ -78,10 +78,9 @@ if (message.contains("successfully")) {
 public String loginUser(@ModelAttribute("user") User user,
                         HttpServletResponse response,
                         RedirectAttributes ra) {
-  // 1) Authenticate (returns role or throws)
-  String role = userService.loginUser(user); // e.g., "ADMIN"/"JOB_SEEKER"/"EMPLOYEE"
+  String role = userService.loginUser(user);
 
-  // 2) On success: set a cookie with the email (session cookie shown here)
+  // For localhost (HTTP), do not set Secure or the cookie won’t be sent back.
   Cookie emailCookie = new Cookie("ee_email", user.getEmail());
   emailCookie.setPath("/");              // send with all requests
   emailCookie.setHttpOnly(true);         // not accessible from JS
@@ -89,15 +88,15 @@ public String loginUser(@ModelAttribute("user") User user,
   emailCookie.setMaxAge(7 * 24 * 60 * 60); // uncomment for persistent cookie
   response.addCookie(emailCookie);       // adds Set-Cookie header [web:388][web:383]
 
-  // 3) Redirect by role (PRG)
   String target = switch (role) {
     case "ADMIN"     -> "/admin/panel";
     case "EMPLOYER"  -> "/employer/dashboard";
     case "JOB_SEEKER"-> "/jobseeker/panel";
     default          -> "/";              // fallback
   };
-  return "redirect:" + target;            // do not return a view name here [web:191][web:246]
+  return "redirect:" + target;
 }
+
 @PostMapping("/logout")
 public String logout(HttpServletResponse resp, RedirectAttributes ra) {
   jakarta.servlet.http.Cookie cookie = new jakarta.servlet.http.Cookie("ee_email", "");

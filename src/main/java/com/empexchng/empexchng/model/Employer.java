@@ -50,15 +50,15 @@ public class Employer {
   private Boolean isActive = true;
 
   @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL, orphanRemoval = false)
-  private List<Job> jobs = new ArrayList<>();
+  private List<Job> jobs;
 
   @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL, orphanRemoval = false)
-  private List<EmployerReview> reviews = new ArrayList<>();
+  private List<EmployerReview> reviews;
 
   @OneToOne(mappedBy = "employer", cascade = CascadeType.ALL, orphanRemoval = true)
   private CompanyInfo companyInfo;
 
   @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL, orphanRemoval = false)
-  private List<CompanyPolicy> policies = new ArrayList<>();
+  private List<CompanyPolicy> policies;
 }
 

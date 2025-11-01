@@ -25,8 +25,20 @@ public class SecurityConfig {
             .defaultSuccessUrl("/oauth2/success", true)
         );
 
-    return http.build();
+    // OAuth2 login configuration
+    .oauth2Login(oauth -> oauth
+      .loginPage("/")                       // your custom page
+      .defaultSuccessUrl("/oauth2/success", true) // always go here after OAuth2 login
+    )
+    // Logout configuration (top level, not inside oauth2Login)
+    .logout(logout -> logout
+      .logoutUrl("/logout")
+      .logoutSuccessUrl("/")
+      .permitAll()
+    );
+  return http.build();
 }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
