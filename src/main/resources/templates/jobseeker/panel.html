@@ -31,6 +31,43 @@
         </nav>
     </aside>
 
+  <div class="fixed bottom-6 right-6 z-[9999]"> 
+
+    <button id="chat-toggle-button"
+            class="bg-indigo-600 text-white w-16 h-16 rounded-full shadow-2xl hover:bg-indigo-700 transition transform hover:scale-105 focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 mx-auto">
+            <path fill-rule="evenodd" d="M4.848 2.771A49.144 49.144 0.0 0112 2.25c2.43 0 4.817 0.053 7.152 0.521A6.744 6.744 0.0 0120.25 7.756v10.368L18.437 17.25c-0.207 0.056-0.428 0.09-0.649 0.09h-1.317a6.744 6.744 0.0 01-5.183-2.316l-1.638-1.745c-0.342-0.363-0.812-0.575-1.303-0.575H4.848z" clip-rule="evenodd" />
+        </svg>
+    </button>
+
+    <div id="chat-panel" class="absolute bottom-0 right-0 w-80 h-[450px] bg-white rounded-lg shadow-2xl overflow-hidden hidden transition-all duration-300 transform translate-y-full">
+
+        <div class="p-3 bg-indigo-700 text-white flex justify-between items-center shadow-md">
+            <h3 class="text-md font-semibold">💼 Job Assistant Chatbot</h3>
+            <button id="close-chat-button" class="text-white opacity-75 hover:opacity-100">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        
+        <div id="chat-window" class="p-3 h-[350px] overflow-y-auto space-y-3 bg-gray-50 border-b">
+            <div class="text-center text-sm text-gray-500 italic mt-2">How can I help with your job search today?</div>
+        </div>
+
+        <div class="p-3 flex border-t">
+            <input type="text" id="chat-input" placeholder="Ask a professional question..."
+                   class="flex-1 border border-gray-300 rounded-l-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+            <button id="send-button"
+                    class="bg-indigo-600 text-white px-4 py-2 rounded-r-lg hover:bg-indigo-700 text-sm">
+                Send
+            </button>
+        </div>
+        <p id="chat-status" class="text-xs text-center p-1 text-red-500 hidden">Error connecting to the API.</p>
+    </div>
+
+</div>
+
     <main class="flex-1 p-8 overflow-auto relative">
         <header class="flex justify-between items-center mb-8">
             <h1 class="text-3xl font-bold text-gray-800">Available Jobs</h1>
@@ -91,7 +128,118 @@
         </div>
     </main>
 </div>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/genai@0.15.0/dist/client.min.js"></script>
+<script>
+    // --- UI Elements ---
+    const chatPanel = document.getElementById('chat-panel');
+    const toggleButton = document.getElementById('chat-toggle-button');
+    const closeButton = document.getElementById('close-chat-button');
+    const chatWindow = document.getElementById('chat-window');
+    const chatInput = document.getElementById('chat-input');
+    const sendButton = document.getElementById('send-button');
+    const chatStatus = document.getElementById('chat-status'); // Used for network/server errors
+    
+    // ------------------------------------------------------------
+    // REMOVED: isGeminiReady flag and the initial check (if (!isGeminiReady))
+    // The server status (success/fail) will handle connectivity checks.
+    // ------------------------------------------------------------
 
+
+    // --- Layout Functions ---
+    function toggleChat(e) {
+        e.stopPropagation();
+        if (chatPanel.classList.contains('hidden')) {
+            // Show Panel: Removes 'hidden' and triggers the slide-up animation
+            chatPanel.classList.remove('hidden', 'translate-y-full'); 
+            chatPanel.classList.add('translate-y-0');
+            chatInput.focus(); // Focus on the input field
+        } else {
+            // Hide Panel: Triggers the slide-down animation and adds 'hidden' after transition
+            chatPanel.classList.add('translate-y-full');
+            chatPanel.classList.remove('translate-y-0');
+            setTimeout(() => chatPanel.classList.add('hidden'), 300);
+        }
+    }
+
+    function addMessage(text, sender) {
+        const messageDiv = document.createElement('div');
+        const isUser = sender === 'user';
+        
+        messageDiv.className = isUser 
+            ? 'flex justify-end' 
+            : 'flex justify-start';
+
+        messageDiv.innerHTML = `<div class="max-w-[90%] rounded-xl px-3 py-2 text-sm shadow-md ${isUser 
+            ? 'bg-indigo-600 text-white' 
+            : 'bg-gray-200 text-gray-800'}">
+            ${text}
+        </div>`;
+        
+        chatWindow.appendChild(messageDiv);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    // --- Core Logic: The Secure Fetch API Call ---
+    async function handleSend() {
+        // Since isGeminiReady is gone, we only check for message existence
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        addMessage(message, 'user');
+        chatInput.value = '';
+        sendButton.disabled = true;
+        chatInput.placeholder = "Assistant is typing...";
+        chatStatus.classList.add('hidden'); // Clear previous status messages
+        
+        // Remove initial instruction message
+        document.querySelector('.text-center.text-sm.text-gray-500')?.remove();
+
+        try {
+            const response = await fetch('/api/gemini/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message }) // Sends only the user's data
+            });
+
+            const data = await response.json();
+            
+            if (response.ok) {
+                let responseText = data.responseText; 
+                // Basic Markdown conversion (if needed, or backend can do it)
+                responseText = responseText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                responseText = responseText.replace(/\n/g, '<br>');
+
+                addMessage(responseText, 'assistant');
+                
+            } else {
+                // Display error from the backend service layer
+                console.error("Backend Error:", data);
+                chatStatus.textContent = "Server Error: Could not get a response. Check service logs.";
+                chatStatus.classList.remove('hidden');
+                addMessage("Error: Please try again.", 'assistant');
+            }
+
+        } catch (error) {
+            console.error("Network Error:", error);
+            chatStatus.textContent = "Network Error: Cannot reach the server.";
+            chatStatus.classList.remove('hidden');
+            addMessage("Error: Please check your network connection.", 'assistant');
+        } finally {
+            sendButton.disabled = false;
+            chatInput.placeholder = "Ask a professional question...";
+        }
+    }
+
+    // --- Event Listeners ---
+    toggleButton.addEventListener('click', toggleChat);
+    closeButton.addEventListener('click', toggleChat);
+    sendButton.addEventListener('click', handleSend);
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !sendButton.disabled) {
+            handleSend();
+        }
+    });
+</script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         function generateInitialsAvatar(container, name, photoUrl) {
