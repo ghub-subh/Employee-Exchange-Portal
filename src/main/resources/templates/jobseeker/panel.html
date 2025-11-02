@@ -103,7 +103,7 @@
                         <th:block th:unless="${appliedJobIds.contains(job.jobId)}">
                             <form th:action="@{/jobseeker/apply/{id}(id=${job.jobId})}" method="post">
                                 <button type="submit" class="px-4 py-2 text-sm text-white rounded-lg bg-blue-600 hover:bg-blue-700">
-                                    View Details & Apply
+                                    Apply
                                 </button>
                             </form>
                         </th:block>
