@@ -8,23 +8,22 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
-  // Job seeker views their applications
-  List<Application> findBySeeker_SeekerIdOrderByAppliedAtDesc(String seekerId);
 
-  // Employer views applications to a job
-  List<Application> findByJob_JobIdOrderByAppliedAtDesc(Long jobId);
+    // --- ADD THIS NEW QUERY ---
+    @Query("SELECT a FROM Application a WHERE a.job.employer.employerId = :employerId ORDER BY a.appliedAt DESC")
+    List<Application> findByEmployerId(@Param("employerId") String employerId);
 
-  // Prevent duplicate apply (enforced also by unique constraint)
-  Application findByJob_JobIdAndSeeker_SeekerId(Long jobId, String seekerId);
+    boolean existsByJob_JobIdAndSeeker_SeekerId(Long jobId, String seekerId);
+    List<Application> findBySeeker_SeekerIdOrderByAppliedAtDesc(String seekerId);
+    List<Application> findByJob_JobIdOrderByAppliedAtDesc(Long jobId);
+    Application findByJob_JobIdAndSeeker_SeekerId(Long jobId, String seekerId);
+    long countByJob_JobIdAndStatus(Long jobId, String status);
 
-  long countByJob_JobIdAndStatus(Long jobId, String status);
+    @Modifying
+    @Query("update Application a set a.status = :status, a.decidedAt = CURRENT_TIMESTAMP where a.applicationId = :id")
+    int setStatus(@Param("id") Long applicationId, @Param("status") String status);
 
-  @Modifying
-  @Query("update Application a set a.status = :status, a.decidedAt = CURRENT_TIMESTAMP where a.applicationId = :id")
-  int setStatus(@Param("id") Long applicationId, @Param("status") String status); // PENDING/ACCEPTED/REJECTED/WITHDRAWN
-
-  @Modifying
-  @Query("delete from Application a where a.job.jobId = :jobId and a.status = 'PENDING'")
-  int deletePendingByJob(@Param("jobId") Long jobId);
+    @Modifying
+    @Query("delete from Application a where a.job.jobId = :jobId and a.status = 'PENDING'")
+    int deletePendingByJob(@Param("jobId") Long jobId);
 }
-

@@ -26,34 +26,40 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class JobSeeker {
-  @Id
-  @Column(name = "seeker_id", length = 200)
-  private String seekerId;
+    @Id
+    @Column(name = "seeker_id", length = 200)
+    private String seekerId;
 
-  @MapsId
-  @OneToOne(optional = false)
-  @JoinColumn(name = "seeker_id")
-  private User user; // role should be JOB_SEEKER
+    @MapsId
+    @OneToOne(optional = false)
+    @JoinColumn(name = "seeker_id")
+    private User user;
 
-  @Column(name = "resume_url", length = 500)
-  private String resumeUrl;
+    @Column(name = "resume_url", length = 500)
+    private String resumeUrl;
 
-  @Lob
-  @Column(name = "skills_text")
-  private String skillsText;
+    @Lob
+    @Column(name = "skills_text")
+    private String skillsText;
 
-  @Column(name = "experience_years", precision = 4, scale = 1)
-  private BigDecimal experienceYears;
+    @Column(name = "experience_years", precision = 4, scale = 1)
+    private BigDecimal experienceYears;
 
-  @Column(length = 150)
-  private String location;
+    @Column(length = 150)
+    private String location;
 
-  @Column(name = "is_active", nullable = false)
-  private Boolean isActive = true;
+    // --- ADD @Builder.Default HERE ---
+    @Builder.Default
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive = true;
 
-  @OneToMany(mappedBy = "seeker", cascade = CascadeType.ALL, orphanRemoval = false)
-  private List<Application> applications = new ArrayList<>();
+    // --- ADD @Builder.Default HERE ---
+    @Builder.Default
+    @OneToMany(mappedBy = "seeker", cascade = CascadeType.ALL, orphanRemoval = false)
+    private List<Application> applications = new ArrayList<>();
 
-  @OneToMany(mappedBy = "seeker", cascade = CascadeType.ALL, orphanRemoval = false)
-  private List<EmployerReview> reviews = new ArrayList<>();
+    // --- ADD @Builder.Default HERE ---
+    @Builder.Default
+    @OneToMany(mappedBy = "seeker", cascade = CascadeType.ALL, orphanRemoval = false)
+    private List<EmployerReview> reviews = new ArrayList<>();
 }

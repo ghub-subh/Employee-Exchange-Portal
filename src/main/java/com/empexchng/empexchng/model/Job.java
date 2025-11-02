@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.*;
+
 @Entity
 @Table(name = "jobs")
 @Data
@@ -17,41 +18,54 @@ import jakarta.persistence.*;
 @AllArgsConstructor
 @Builder
 public class Job {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "job_id")
-  private Long jobId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "job_id")
+    private Long jobId;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(name = "employer_id", nullable = false)
-  private Employer employer;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "employer_id", nullable = false)
+    private Employer employer;
 
-  @Column(nullable = false, length = 200)
-  private String title;
+    @Column(nullable = false, length = 200)
+    private String title;
 
-  @Lob
-  @Column(nullable = false)
-  private String description;
+    @Lob
+    @Column(nullable = false)
+    private String description;
 
-  @Column(length = 150)
-  private String location;
+    @Column(length = 150)
+    private String location;
 
-  @Column(name = "employment_type", length = 50)
-  private String employmentType;
+    @Column(name = "skills_required", length = 255)
+    private String skillsRequired;
 
-  @Column(name = "salary_min", precision = 12, scale = 2)
-  private BigDecimal salaryMin;
+    @Column(name = "employment_type", length = 50)
+    private String employmentType;
 
-  @Column(name = "salary_max", precision = 12, scale = 2)
-  private BigDecimal salaryMax;
+    @Column(name = "salary_min", precision = 12, scale = 2)
+    private BigDecimal salaryMin;
 
-  @Column(name = "is_active", nullable = false)
-  private Boolean isActive = true;
+    @Column(name = "salary_max", precision = 12, scale = 2)
+    private BigDecimal salaryMax;
 
-  @Column(name = "created_at", nullable = false, updatable = false)
-  private Instant createdAt = Instant.now();
+    // --- ADD @Builder.Default HERE ---
+    @Builder.Default
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive = true;
 
-  @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = false)
-  private List<Application> applications = new ArrayList<>();
+    // --- ADD @Builder.Default HERE ---
+    @Builder.Default
+    @Column(name = "is_approved", nullable = false)
+    private Boolean isApproved = false;
+
+    // --- ADD @Builder.Default HERE ---
+    @Builder.Default
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Instant createdAt = Instant.now();
+
+    // --- ADD @Builder.Default HERE ---
+    @Builder.Default
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = false)
+    private List<Application> applications = new ArrayList<>();
 }
-

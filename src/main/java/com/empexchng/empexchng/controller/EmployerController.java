@@ -1,96 +1,159 @@
 package com.empexchng.empexchng.controller;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.empexchng.empexchng.model.Application;
+import com.empexchng.empexchng.model.Employer; // Import this
 import com.empexchng.empexchng.model.User;
+import com.empexchng.empexchng.repository.ApplicationRepository;
+import com.empexchng.empexchng.repository.EmployerRepository; // Import this
+import com.empexchng.empexchng.service.ApplicationService;
+import com.empexchng.empexchng.service.EmployerService; // Import this
+import com.empexchng.empexchng.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.empexchng.empexchng.model.VacancyRequest;
 import com.empexchng.empexchng.repository.UserRepository;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/employer") // All URLs in this file start with /employer
+@RequestMapping("/employer")
 public class EmployerController {
+    
+    // ... (UserRepository, JobService, ApplicationRepository are unchanged) ...
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private JobService jobService;
+    @Autowired
+    private ApplicationRepository applicationRepository;
+    @Autowired
+    private ApplicationService applicationService;
 
-    // Your demo data
-    private static final List<VacancyRequest> DEMO_REQUESTS = Arrays.asList(
-            new VacancyRequest(1L, "John Doe", "john@example.com", "https://randomuser.me/api/portraits/men/32.jpg", "Software Engineer", "Experienced full-stack developer..."),
-            new VacancyRequest(2L, "Mary Smith", "mary@example.com", "https://randomuser.me/api/portraits/women/65.jpg", "Marketing Manager", "Expert in digital marketing and SEO..."),
-            new VacancyRequest(3L, "David Johnson", "david@example.com", "https://randomuser.me/api/portraits/men/45.jpg", "Data Analyst", "Skilled in SQL and Tableau..."),
-            new VacancyRequest(4L, "Ella Brown", "ella@example.com", "https://randomuser.me/api/portraits/women/33.jpg", "Software Engineer", "Passionate UI/UX designer..."),
-            new VacancyRequest(5L, "Michael Lee", "michael@example.com", "https://randomuser.me/api/portraits/men/51.jpg", "Marketing Manager", "AWS Certified DevOps professional.")
-    );
+    // --- ADD THESE ---
+    @Autowired
+    private EmployerRepository employerRepository;
+    @Autowired
+    private EmployerService employerService;
 
-    // Helper method to group data
-    private Map<String, List<VacancyRequest>> getGroupedRequests() {
-        return DEMO_REQUESTS.stream()
-                .collect(Collectors.groupingBy(VacancyRequest::getVacancyTitle));
+
+    // ... (dashboard, applications, vacancies, approve/reject methods are all unchanged) ...
+    
+    @GetMapping("/dashboard")
+    public String employerDashboard(Model model,
+                                    @AuthenticationPrincipal User user) {
+        
+        List<Application> applications = applicationRepository.findByEmployerId(user.getUserId());
+        Map<String, List<Application>> groupedApplications = applications.stream()
+                .collect(Collectors.groupingBy(app -> app.getJob().getTitle()));
+
+        model.addAttribute("employerName", user.getName());
+        model.addAttribute("applications", applications);
+        model.addAttribute("groupedApplications", groupedApplications);
+        return "employer/dashboard";
     }
 
-    // Handles /employer/dashboard
- @GetMapping("/dashboard")
-public String employerDashboard(Model model,
-   @CookieValue(value="ee_email", required=false) String email) {
-  String name = "Guest";
-  if (email != null && !email.isBlank()) {
-    User u = userRepository.findByEmail(email);
-    if (u != null) name = u.getName();
-  }
-  model.addAttribute("employerName", name);
-  model.addAttribute("requests", DEMO_REQUESTS);
-  model.addAttribute("groupedRequests", getGroupedRequests());
-  return "employer/dashboard";
-}
-
-
-    // Handles the "User Applications" link from the sidebar
     @GetMapping("/applications")
-    public String showApplications(Model model) {
-        model.addAttribute("requests", DEMO_REQUESTS);
-        model.addAttribute("groupedRequests", getGroupedRequests());
-        model.addAttribute("employerName", "Demo Employer");
-        return "employer/dashboard"; // Also serves the dashboard HTML
+    public String showApplications(Model model,
+                                   @AuthenticationPrincipal User user) {
+        
+        List<Application> applications = applicationRepository.findByEmployerId(user.getUserId());
+        Map<String, List<Application>> groupedApplications = applications.stream()
+                .collect(Collectors.groupingBy(app -> app.getJob().getTitle()));
+
+        model.addAttribute("employerName", user.getName());
+        model.addAttribute("applications", applications);
+        model.addAttribute("groupedApplications", groupedApplications);
+        return "employer/dashboard";
     }
 
-    // --- This is the controller for the code you just posted ---
-    
-    // 1. Handles the "Vacancies" link from the sidebar
     @GetMapping("/vacancies")
-    public String showVacancyForm(Model model) {
-        // Your vacancies.html file uses employerName in the header
-        model.addAttribute("employerName", "Demo Employer");
-        return "vacancies"; // Serves the vacancies.html file
+    public String showVacancyForm(Model model,
+                                  @AuthenticationPrincipal User user) {
+        String name = (user != null) ? user.getName() : "Guest";
+        model.addAttribute("employerName", name);
+        return "employer/vacancies";
     }
-    
-    // 2. Handles the form submission from vacancies.html
+
     @PostMapping("/vacancies")
-    public String createVacancy(@RequestParam("title") String title, 
+    public String createVacancy(@RequestParam("title") String title,
                                 @RequestParam("description") String description,
                                 @RequestParam("location") String location,
-                                @RequestParam("skills_required") String skills) {
-        
-        // This is where you would save the data to the database
-        System.out.println("New Vacancy Posted!");
-        System.out.println("Title: " + title);
-        System.out.println("Description: " + description);
-        System.out.println("Location: " + location);
-        System.out.println("Skills: " + skills);
+                                @RequestParam("skills_required") String skills,
+                                @AuthenticationPrincipal User user,
+                                RedirectAttributes ra) {
+        try {
+            jobService.createJob(title, description, location, skills, user);
+            ra.addFlashAttribute("successMessage", "Vacancy posted! It is pending admin approval.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            ra.addFlashAttribute("errorMessage", "Error posting vacancy: " + e.getMessage());
+        }
 
-        // After posting, send user back to the dashboard
         return "redirect:/employer/dashboard";
     }
+
+    @PostMapping("/application/approve/{id}")
+    public String approveApplication(@PathVariable("id") Long applicationId, RedirectAttributes ra) {
+        try {
+            applicationService.updateApplicationStatus(applicationId, "ACCEPTED");
+            ra.addFlashAttribute("successMessage", "Application approved.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+        }
+        return "redirect:/employer/dashboard";
+    }
+
+    @PostMapping("/application/reject/{id}")
+    public String rejectApplication(@PathVariable("id") Long applicationId, RedirectAttributes ra) {
+        try {
+            applicationService.updateApplicationStatus(applicationId, "REJECTED");
+            ra.addFlashAttribute("successMessage", "Application rejected.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+        }
+        return "redirect:/employer/dashboard";
+    }
+
+    // --- ADD THESE 2 NEW METHODS ---
     
-    
+    @GetMapping("/profile")
+    public String showProfilePage(@AuthenticationPrincipal User user, Model model) {
+        Employer employer = employerRepository.findById(user.getUserId())
+                .orElse(new Employer()); // Get the employer profile
+        
+        model.addAttribute("user", user);
+        model.addAttribute("employer", employer); // Add profile details to the model
+        return "employer/profile";
+    }
+
+    @PostMapping("/profile")
+    public String updateProfile(
+            @AuthenticationPrincipal User user,
+            @RequestParam String name,
+            @RequestParam String companyName,
+            @RequestParam String location,
+            @RequestParam String website,
+            @RequestParam String description,
+            RedirectAttributes ra) {
+        
+        try {
+            employerService.updateProfile(user, name, companyName, location, website, description);
+            ra.addFlashAttribute("successMessage", "Profile updated successfully!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            ra.addFlashAttribute("errorMessage", "Error updating profile: " + e.getMessage());
+        }
+        
+        return "redirect:/employer/profile";
+    }
 }

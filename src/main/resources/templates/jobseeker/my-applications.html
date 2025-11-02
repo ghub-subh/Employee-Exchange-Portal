@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Post New Vacancy | Employer Dashboard</title>
+    <title>My Applications | Job Seeker</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 flex flex-col min-h-screen">
@@ -20,22 +20,22 @@
     </div>
 </nav>
 
-<div class="flex flex-1 pt-20"> 
+<div class="flex flex-1 pt-20">
 
     <aside class="w-64 bg-gray-800 text-white flex flex-col p-6 flex-shrink-0">
-        <h2 class="text-2xl font-bold mb-8 text-center">Employer Panel</h2>
+        <h2 class="text-2xl font-bold mb-8 text-center">Job Seeker</h2>
         <nav class="flex flex-col gap-4">
-            <a href="/employer/applications" class="hover:bg-gray-700 p-3 rounded-lg">📝 User Applications</a>
-            <a href="/employer/vacancies" class="bg-gray-700 p-3 rounded-lg">📋 Vacancies</a>
-            <a href="/employer/profile" class="hover:bg-gray-700 p-3 rounded-lg">👤 Edit Profile</a>
+            <a href="/jobseeker/panel" class="hover:bg-gray-700 p-3 rounded-lg">🔍 Find Jobs</a>
+            <a href="/jobseeker/my-applications" class="bg-gray-700 p-3 rounded-lg">📄 My Applications</a>
+            <a href="/jobseeker/profile" class="hover:bg-gray-700 p-3 rounded-lg">👤 Edit Profile</a>
         </nav>
     </aside>
 
     <main class="flex-1 p-8 overflow-auto relative">
         <header class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold text-gray-800">Post New Vacancy</h1>
+            <h1 class="text-3xl font-bold text-gray-800">My Applications</h1>
             <div th:if="${loggedInUser}" class="flex items-center gap-3">
-                <p class="text-gray-600 hidden sm:block">Welcome, <span class="font-semibold text-gray-800" th:text="${loggedInUser.name}">Employer</span> 👋</p>
+                <p class="text-gray-600 hidden sm:block">Welcome, <span class="font-semibold text-gray-800" th:text="${loggedInUser.name}">Job Seeker</span> 👋</p>
                 <div class="initials-avatar w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm"
                      th:data-name="${loggedInUser.name}"
                      th:data-photo-url="${loggedInUser.photoUrl}">
@@ -44,43 +44,31 @@
             </div>
         </header>
 
-        <div class="max-w-3xl mx-auto bg-white rounded-lg shadow p-6">
-            <form th:action="@{/employer/vacancies}" method="post" class="space-y-6">
-                <div>
-                    <label class="block text-gray-700 mb-2" for="title">Job Title</label>
-                    <input id="title" name="title" type="text" placeholder="e.g., 'Software Engineer'" required class="w-full border border-gray-300 rounded px-3 py-2" />
+        <div class="space-y-6">
+            <div th:if="${myApplications.isEmpty()}">
+                <p class="text-gray-600">You have not applied to any jobs yet.</p>
+            </div>
+            
+            <div th:unless="${myApplications.isEmpty()}" th:each="app : ${myApplications}" class="bg-white rounded-lg shadow p-6">
+                <div class="flex justify-between items-center">
+                    <div class="flex-1">
+                        <h3 class="text-xl font-semibold text-indigo-900" th:text="${app.job.title}">Job Title</h3>
+                        <p class="text-md text-gray-700 mt-1" th:text="${app.job.employer.companyName}">Company Name</p>
+                        <p class="text-sm text-gray-500 mt-2" th:text="'Applied on: ' + ${#temporals.format(app.appliedAt, 'dd-MMM-yyyy')}">Applied on</p>
+                    </div>
+                    
+                    <div class="flex-shrink-0">
+                         <span class="px-3 py-1 text-sm font-medium rounded-full"
+                               th:text="${app.status}"
+                               th:classappend="${app.status == 'PENDING'} ? 'bg-yellow-100 text-yellow-800' : (${app.status == 'ACCEPTED'} ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800')">
+                            STATUS
+                         </span>
+                    </div>
                 </div>
-        
-                <div>
-                    <label class="block text-gray-700 mb-2" for="description">Description</label>
-                    <textarea id="description" name="description" rows="5" placeholder="Enter job responsibilities, qualifications, etc." required
-                              class="w-full border border-gray-300 rounded px-3 py-2"></textarea>
-                </div>
-
-                <div>
-                    <label class="block text-gray-700 mb-2" for="location">Location</label>
-                    <input id="location" name="location" type="text" placeholder="e.g., 'Remote' or 'New York, NY'" required class="w-full border border-gray-300 rounded px-3 py-2" />
-                </div>
-
-                <div>
-                    <label class="block text-gray-700 mb-2" for="skills">Skills Required (comma-separated)</label>
-                    <input id="skills" name="skills_required" type="text" placeholder="e.g., 'Java, Spring Boot, SQL'" required class="w-full border border-gray-300 rounded px-3 py-2" />
-                </div>
-        
-                <div>
-                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
-                        Submit Vacancy for Approval
-                    </button>
-                </div>
-            </form>
+            </div>
         </div>
-        
     </main>
 </div>
-
-<footer class="bg-gray-900 text-gray-300 py-8 text-center mt-auto">
-    <p>&copy; 2025 Employment Exchange. All Rights Reserved.</p>
-</footer>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

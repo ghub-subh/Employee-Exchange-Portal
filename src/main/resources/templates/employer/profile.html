@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Post New Vacancy | Employer Dashboard</title>
+    <title>Edit Profile | Employer</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 flex flex-col min-h-screen">
@@ -20,20 +20,20 @@
     </div>
 </nav>
 
-<div class="flex flex-1 pt-20"> 
+<div class="flex flex-1 pt-20">
 
     <aside class="w-64 bg-gray-800 text-white flex flex-col p-6 flex-shrink-0">
         <h2 class="text-2xl font-bold mb-8 text-center">Employer Panel</h2>
         <nav class="flex flex-col gap-4">
             <a href="/employer/applications" class="hover:bg-gray-700 p-3 rounded-lg">📝 User Applications</a>
-            <a href="/employer/vacancies" class="bg-gray-700 p-3 rounded-lg">📋 Vacancies</a>
-            <a href="/employer/profile" class="hover:bg-gray-700 p-3 rounded-lg">👤 Edit Profile</a>
+            <a href="/employer/vacancies" class="hover:bg-gray-700 p-3 rounded-lg">📋 Vacancies</a>
+            <a href="/employer/profile" class="bg-gray-700 p-3 rounded-lg">👤 Edit Profile</a>
         </nav>
     </aside>
 
     <main class="flex-1 p-8 overflow-auto relative">
         <header class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold text-gray-800">Post New Vacancy</h1>
+            <h1 class="text-3xl font-bold text-gray-800">Edit Company Profile</h1>
             <div th:if="${loggedInUser}" class="flex items-center gap-3">
                 <p class="text-gray-600 hidden sm:block">Welcome, <span class="font-semibold text-gray-800" th:text="${loggedInUser.name}">Employer</span> 👋</p>
                 <div class="initials-avatar w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm"
@@ -44,43 +44,59 @@
             </div>
         </header>
 
-        <div class="max-w-3xl mx-auto bg-white rounded-lg shadow p-6">
-            <form th:action="@{/employer/vacancies}" method="post" class="space-y-6">
+        <div th:if="${successMessage}" class="mb-4 rounded-md bg-green-50 p-3 text-sm text-green-700" th:text="${successMessage}">
+        </div>
+        <div th:if="${errorMessage}" class="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700" th:text="${errorMessage}">
+        </div>
+
+        <div class="max-w-2xl mx-auto bg-white rounded-lg shadow p-6">
+            <form th:action="@{/employer/profile}" method="post" class="space-y-6">
+                
                 <div>
-                    <label class="block text-gray-700 mb-2" for="title">Job Title</label>
-                    <input id="title" name="title" type="text" placeholder="e.g., 'Software Engineer'" required class="w-full border border-gray-300 rounded px-3 py-2" />
+                    <label class="block text-gray-700 mb-2" for="name">Your Full Name</label>
+                    <input id="name" name="name" type="text" th:value="${user.name}" required
+                           class="w-full border border-gray-300 rounded px-3 py-2" />
                 </div>
-        
+                
                 <div>
-                    <label class="block text-gray-700 mb-2" for="description">Description</label>
-                    <textarea id="description" name="description" rows="5" placeholder="Enter job responsibilities, qualifications, etc." required
-                              class="w-full border border-gray-300 rounded px-3 py-2"></textarea>
+                    <label class="block text-gray-700 mb-2" for="companyName">Company Name</label>
+                    <input id="companyName" name="companyName" type="text" th:value="${employer.companyName}" required
+                           class="w-full border border-gray-300 rounded px-3 py-2" />
                 </div>
 
                 <div>
-                    <label class="block text-gray-700 mb-2" for="location">Location</label>
-                    <input id="location" name="location" type="text" placeholder="e.g., 'Remote' or 'New York, NY'" required class="w-full border border-gray-300 rounded px-3 py-2" />
+                    <label class="block text-gray-700 mb-2" for="email">Email Address</label>
+                    <input id="email" name="email" type="email" th:value="${user.email}" readonly
+                           class="w-full border border-gray-300 rounded px-3 py-2 bg-gray-100 cursor-not-allowed" />
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2" for="location">Company Location</label>
+                    <input id="location" name="location" type="text" placeholder="e.g., 'Kolkata, India'"
+                           th:value="${employer.location}" class="w-full border border-gray-300 rounded px-3 py-2" />
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2" for="website">Website URL</label>
+                    <input id="website" name="website" type="url" placeholder="https://www.example.com"
+                           th:value="${employer.website}" class="w-full border border-gray-300 rounded px-3 py-2" />
                 </div>
 
                 <div>
-                    <label class="block text-gray-700 mb-2" for="skills">Skills Required (comma-separated)</label>
-                    <input id="skills" name="skills_required" type="text" placeholder="e.g., 'Java, Spring Boot, SQL'" required class="w-full border border-gray-300 rounded px-3 py-2" />
+                    <label class="block text-gray-700 mb-2" for="description">Company Description</label>
+                    <textarea id="description" name="description" rows="5" placeholder="A brief summary of your company..."
+                              th:text="${employer.description}" class="w-full border border-gray-300 rounded px-3 py-2"></textarea>
                 </div>
         
                 <div>
                     <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
-                        Submit Vacancy for Approval
+                        Save Profile
                     </button>
                 </div>
             </form>
         </div>
-        
     </main>
 </div>
-
-<footer class="bg-gray-900 text-gray-300 py-8 text-center mt-auto">
-    <p>&copy; 2025 Employment Exchange. All Rights Reserved.</p>
-</footer>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
