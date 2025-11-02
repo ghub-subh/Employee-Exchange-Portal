@@ -43,8 +43,10 @@
             </div>
         </header>
 
-        <div th:if="${successMessage}" class="mb-4 rounded-md bg-green-50 p-3 text-sm text-green-700" th:text="${successMessage}"></div>
-        <div th:if="${errorMessage}" class="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700" th:text="${errorMessage}"></div>
+        <div th:if="${successMessage}" class="mb-4 rounded-md bg-green-50 p-3 text-sm text-green-700" th:text="${successMessage}">
+        </div>
+        <div th:if="${errorMessage}" class="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700" th:text="${errorMessage}">
+        </div>
 
         <div class="space-y-6">
             <h2 class="text-2xl font-semibold text-gray-800">Pending User Approvals</h2>
@@ -86,7 +88,30 @@
         </div>
         
         <div class="space-y-6 mt-12" id="jobs">
+            <h2 class="text-2xl font-semibold text-gray-800">Pending Job Approvals</h2>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div th:if="${unapprovedJobs.isEmpty()}">
+                    <p class="text-gray-600">No jobs are currently pending approval.</p>
+                </div>
+                <ul th:unless="${unapprovedJobs.isEmpty()}" class="space-y-4">
+                    <li th:each="job : ${unapprovedJobs}"
+                        class="p-4 rounded-lg border border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div class="flex flex-col">
+                            <span class="font-semibold text-indigo-900" th:text="${job.title}">Job Title</span>
+                            <span class="text-sm text-gray-600" th:text="${job.employer.companyName}">Company Name</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="text-sm text-gray-500" th:text="${job.location}">Location</span>
+                            <form th:action="@{/admin/approve/job/{id}(id=${job.jobId})}" method="post">
+                                <button type="submit" class="px-4 py-2 text-sm text-white rounded-lg bg-green-600 hover:bg-green-700">
+                                    Approve Job
+                                </button>
+                            </form>
+                        </div>
+                    </li>
+                </ul>
             </div>
+        </div>
         
     </main>
 </div>

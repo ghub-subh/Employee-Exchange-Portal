@@ -13,6 +13,9 @@ public interface JobRepository extends JpaRepository<Job, Long>, JpaSpecificatio
 
     List<Job> findByIsApproved(boolean isApproved);
 
+    @Query("SELECT j FROM Job j JOIN FETCH j.employer WHERE j.isApproved = :isApproved")
+    List<Job> findByIsApprovedWithEmployer(@Param("isApproved") boolean isApproved);
+
     // --- ADD THIS METHOD ---
     List<Job> findByIsApprovedTrueAndIsActiveTrueOrderByCreatedAtDesc();
 
