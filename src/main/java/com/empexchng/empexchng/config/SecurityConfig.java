@@ -42,7 +42,7 @@ public class SecurityConfig {
                 )
                 // --- THIS SECTION IS UPDATED ---
                 .oauth2Login(oauth -> oauth
-                        .loginPage("/login")
+                        .loginPage("/")
                         .defaultSuccessUrl("/user/register", true) // Go directly to the register page
                 )
                 // --- END OF UPDATE ---
